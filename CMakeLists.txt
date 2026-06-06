@@ -13,8 +13,6 @@ file(GLOB_RECURSE SOURCES
 add_executable(Software-Rasterizer ${SOURCES})
 
 target_include_directories(Software-Rasterizer
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

@@ -1,13 +1,13 @@
 #include <iostream>
-#include "Image.h"
+#include "TGAImage.h"
 
 int main()
 {
-    Image image(2, 2, 4, { 1, 1, 1, 0 });
+    TGAImage image(800, 600, 4, { 122, 123, 32, 255 });
 
     Color color = image.Get(0, 1);
-    for (int i = 0; i < 4; i++) printf("%d", color.BGRA[i]);
-    printf("\n");
+
+    image.WriteFile("test.tga");
 
     std::cout << "Hello, World!" << std::endl;
 }

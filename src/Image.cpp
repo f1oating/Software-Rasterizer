@@ -14,6 +14,18 @@ Image::Image(int width, int height, int bpp, Color color) :
     }
 }
 
+Color Image::Get(int x, int y)
+{
+    if (!Data.size() || x < 0 || y < 0 || x > Width || y > Height) {};
+
+    Color color;
+
+    const uint8_t* pixelData = Data.data() + (x + y * Width) * BPP;
+    mempcpy(color.BGRA, pixelData, BPP);
+
+    return color;
+}
+
 void Image::Set(int x, int y, Color& color)
 {
     if (!Data.size() || x < 0 || y < 0 || x > Width || y > Height) return;

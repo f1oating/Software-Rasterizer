@@ -63,12 +63,30 @@ err:
 
 void TGAImage::FlipHorizontally()
 {
-
+    for (int y = 0; y < m_Height; y++)
+    {
+        for (int x = 0; x < m_Width / 2; x++)
+        {
+            for (int b = 0; b < m_BPP; b++)
+            {
+                std::swap(m_Data[(x + y * m_Width) * m_BPP + b], m_Data[(m_Width - 1 - x + y * m_Width) * m_BPP + b]);
+            }
+        }
+    }
 }
 
 void TGAImage::FlipVertically()
 {
-
+    for (int x = 0; x < m_Width; x++)
+    {
+        for (int y = 0; y < m_Height / 2; y++)
+        {
+            for (int b = 0; b < m_BPP; b++)
+            {
+                std::swap(m_Data[(x + y * m_Width) * m_BPP + b], m_Data[(x + (m_Height - 1 - y) * m_Width) * m_BPP + b]);
+            }
+        }
+    }
 }
 
 Color TGAImage::Get(int x, int y)

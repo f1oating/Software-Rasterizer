@@ -17,7 +17,63 @@ TGAImage::TGAImage(int width, int height, int bpp, Color color) :
 
 bool TGAImage::ReadFile(std::string path)
 {
+    std::ifstream in;
+    in.open(path, std::ios::binary);
+    if (!in.is_open())
+    {
+        std::cerr << "Can not open file " << path << std::endl;
+        return false;
+    }
 
+    TGAHeader header;
+    in.read(reinterpret_cast<char*>(&header), sizeof(header));
+
+    if (!in.good())
+    {
+        std::cerr << "An error occured while reading the header"<< std::endl;
+        return false;
+    }
+
+    m_Width = header.Width;
+    m_Height = header.Height;
+    m_BPP = header.BitsPerPixel >> 3;
+
+    if (m_Width <= 0 || m_Height <= 0 || (m_BPP != Grayscale && m_BPP != RGB && m_BPP != RGBA))
+    {
+        std::cerr << "Bad BPP or Width/Height value"<< std::endl;
+        return false;
+    }
+
+    size_t numBytes = m_Width * m_Height * m_BPP;
+    m_Data = std::vector<uint8_t>(numBytes, 0);
+
+    if (header.DataTypeCode == 3 || header.DataTypeCode == 2)
+    {
+        in.read(reinterpret_cast<char*>(m_Data.data()), numBytes);
+        if (!in.good())
+        {
+            std::cerr << "An error occured while reading the data"<< std::endl;
+            return false;
+        }
+    } else
+    {
+        std::cerr << "Unknown file format "<< (int) header.DataTypeCode << std::endl;
+        return false;
+    }
+
+    if (!(header.ImageDescriptor & 0x20))
+    {
+        FlipVertically();
+    }
+
+    if (header.ImageDescriptor & 0x10)
+    {
+        FlipHorizontally();
+    }
+
+    std::cout << m_Width << "x" << m_Height << "/" << m_BPP*8 << std::endl;
+
+    return true;
 }
 
 bool TGAImage::WriteFile(std::string path, bool vFlip, bool rle)

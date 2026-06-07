@@ -3,9 +3,7 @@
 
 int main()
 {
-    TGAImage image(800, 600, 4, { 122, 123, 32, 255 });
-
-    Color color = image.Get(0, 1);
+    TGAImage image(800, 600, 4, { 111, 231, 32, 255 });
 
     image.WriteFile("test.tga");
 

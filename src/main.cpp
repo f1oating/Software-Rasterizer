@@ -23,10 +23,12 @@ void line(int ax, int ay, int bx, int by, TGAImage& framebuffer, Color color)
         std::swap(ax, bx);
         std::swap(ay, by);
     }
+    
+    int y = ay;
+    int iError = 0;
+    
     for (float x = ax; x < bx; x++)
     {
-        float t = (x - ax) / static_cast<float>(bx - ax);
-        int y = std::round(ay + (by - ay) * t);
         if (steep)
         {
             framebuffer.Set(y, x, color);
@@ -34,6 +36,10 @@ void line(int ax, int ay, int bx, int by, TGAImage& framebuffer, Color color)
         {
             framebuffer.Set(x, y, color);
         }
+
+        iError += 2 * std::abs(by - ay);
+        y += (by > ay ? 1 : -1) * (iError > bx - ax);
+        iError -= 2 * (bx - ax) * (iError > bx - ax);
     }
 }
 

@@ -48,7 +48,7 @@ public:
     void FlipVertically();
 
     Color Get(int x, int y);
-    void Set(int x, int y, Color& color);
+    void Set(int x, int y, const Color& color);
 
     int GetWidth() { return m_Width; }
     int GetHeight() { return m_Height; }

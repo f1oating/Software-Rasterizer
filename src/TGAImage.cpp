@@ -159,7 +159,7 @@ Color TGAImage::Get(int x, int y)
 
 void TGAImage::Set(int x, int y, const Color& color)
 {
-    if (!m_Data.size() || x < 0 || y < 0 || x > m_Width || y > m_Height) return;
+    if (!m_Data.size() || x < 0 || y < 0 || x >= m_Width || y >= m_Height) return;
     memcpy(m_Data.data() + (x + y * m_Width) * m_BPP, color.BGRA, m_BPP);
 }
 

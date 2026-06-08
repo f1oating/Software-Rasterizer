@@ -3,6 +3,7 @@
 #include <cmath>
 #include <chrono>
 #include <random>
+#include "Model.h"
 
 constexpr Color WHITE = { 255, 255, 255, 255 };
 constexpr Color GREEN = { 0, 255, 0, 255 };
@@ -43,21 +44,35 @@ void line(int ax, int ay, int bx, int by, TGAImage& framebuffer, Color color)
     }
 }
 
+std::tuple<int, int> project(vec3 vec)
+{
+    return {
+        (vec.x + 1.0f) * 800 / 2,
+        (vec.y + 1.0f) * 800 / 2,
+    };
+}
+
 int main()
 {
-    TGAImage framebuffer(64, 64, TGAImage::RGB);
+    TGAImage framebuffer(800, 800, TGAImage::RGB);
 
-    std::srand(std::time({}));
-    for (int i = 0; i < (1 << 24); i++) 
+    Model model("res/diablo3_pose.obj");
+
+    for (int i=0; i<model.NumFaces(); i++) 
     {
-        int ax = rand() % 64, ay = rand() % 64;
-        int bx = rand() % 64, by = rand() % 64;
-        line(ax, ay, bx, by, framebuffer, { 
-            static_cast<uint8_t>(rand() % 255), 
-            static_cast<uint8_t>(rand() % 255), 
-            static_cast<uint8_t>(rand() % 255), 
-            static_cast<uint8_t>(rand() % 255) 
-        });
+        auto [ax, ay] = project(model.Vertex(i, 0));
+        auto [bx, by] = project(model.Vertex(i, 1));
+        auto [cx, cy] = project(model.Vertex(i, 2));
+        line(ax, ay, bx, by, framebuffer, RED);
+        line(bx, by, cx, cy, framebuffer, RED);
+        line(cx, cy, ax, ay, framebuffer, RED);
+    }
+
+    for (int i=0; i < model.NumVerts(); i++) 
+    {
+        vec3 v = model.Vertex(i);
+        auto [x, y] = project(v);
+        framebuffer.Set(x, y, WHITE);
     }
 
     framebuffer.WriteFile("test.tga");

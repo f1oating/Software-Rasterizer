@@ -5,6 +5,9 @@
 #include <random>
 #include "Model.h"
 
+constexpr int WIDTH = 128;
+constexpr int HEIGHT = 128;
+
 constexpr Color WHITE = { 255, 255, 255, 255 };
 constexpr Color GREEN = { 0, 255, 0, 255 };
 constexpr Color RED = { 0, 0, 255, 255 };
@@ -44,36 +47,31 @@ void line(int ax, int ay, int bx, int by, TGAImage& framebuffer, Color color)
     }
 }
 
+void triangle(int ax, int ay, int bx, int by,
+    int cx, int cy, TGAImage& framebuffer, Color color)
+{
+    line(ax, ay, bx, by, framebuffer, color);
+    line(bx, by, cx, cy, framebuffer, color);
+    line(cx, cy, ax, ay, framebuffer, color);
+}
+
 std::tuple<int, int> project(vec3 vec)
 {
     return {
-        (vec.x + 1.0f) * 800 / 2,
-        (vec.y + 1.0f) * 800 / 2,
+        (vec.x + 1.0f) * WIDTH / 2,
+        (vec.y + 1.0f) * HEIGHT / 2,
     };
 }
 
 int main()
 {
-    TGAImage framebuffer(800, 800, TGAImage::RGB);
+    TGAImage framebuffer(WIDTH, WIDTH, TGAImage::RGB);
 
     Model model("res/diablo3_pose.obj");
 
-    for (int i=0; i<model.NumFaces(); i++) 
-    {
-        auto [ax, ay] = project(model.Vertex(i, 0));
-        auto [bx, by] = project(model.Vertex(i, 1));
-        auto [cx, cy] = project(model.Vertex(i, 2));
-        line(ax, ay, bx, by, framebuffer, RED);
-        line(bx, by, cx, cy, framebuffer, RED);
-        line(cx, cy, ax, ay, framebuffer, RED);
-    }
-
-    for (int i=0; i < model.NumVerts(); i++) 
-    {
-        vec3 v = model.Vertex(i);
-        auto [x, y] = project(v);
-        framebuffer.Set(x, y, WHITE);
-    }
+    triangle(7, 45, 35, 100, 45, 60, framebuffer, RED);
+    triangle(120, 35, 90, 5, 45, 110, framebuffer, WHITE);
+    triangle(115, 83, 80, 90, 85, 120, framebuffer, GREEN);
 
     framebuffer.WriteFile("test.tga");
 
